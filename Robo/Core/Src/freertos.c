@@ -1,0 +1,337 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * File Name          : freertos.c
+  * Description        : Code for freertos applications
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2026 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+
+/* Includes ------------------------------------------------------------------*/
+#include "FreeRTOS.h"
+#include "task.h"
+#include "main.h"
+#include "cmsis_os.h"
+
+/* Private includes ----------------------------------------------------------*/
+/* USER CODE BEGIN Includes */
+
+#include "User_Task.h"
+#include "stm32f4xx_it.h"
+
+/* USER CODE END Includes */
+
+/* Private typedef -----------------------------------------------------------*/
+/* USER CODE BEGIN PTD */
+
+/* USER CODE END PTD */
+
+/* Private define ------------------------------------------------------------*/
+/* USER CODE BEGIN PD */
+
+/* USER CODE END PD */
+
+/* Private macro -------------------------------------------------------------*/
+/* USER CODE BEGIN PM */
+
+/* USER CODE END PM */
+
+/* Private variables ---------------------------------------------------------*/
+/* USER CODE BEGIN Variables */
+
+
+/* USER CODE END Variables */
+/* Definitions for defaultTask */
+osThreadId_t defaultTaskHandle;
+const osThreadAttr_t defaultTask_attributes = {
+  .name = "defaultTask",
+  .stack_size = 64 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for RUN_LED_Flash */
+osThreadId_t RUN_LED_FlashHandle;
+const osThreadAttr_t RUN_LED_Flash_attributes = {
+  .name = "RUN_LED_Flash",
+  .stack_size = 64 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for State_LED_Flash */
+osThreadId_t State_LED_FlashHandle;
+const osThreadAttr_t State_LED_Flash_attributes = {
+  .name = "State_LED_Flash",
+  .stack_size = 64 * 4,
+  .priority = (osPriority_t) osPriorityLow,
+};
+/* Definitions for KEY_Scan */
+osThreadId_t KEY_ScanHandle;
+const osThreadAttr_t KEY_Scan_attributes = {
+  .name = "KEY_Scan",
+  .stack_size = 64 * 4,
+  .priority = (osPriority_t) osPriorityHigh,
+};
+/* Definitions for Set_And_Show */
+osThreadId_t Set_And_ShowHandle;
+const osThreadAttr_t Set_And_Show_attributes = {
+  .name = "Set_And_Show",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for Slow_Compute */
+osThreadId_t Slow_ComputeHandle;
+const osThreadAttr_t Slow_Compute_attributes = {
+  .name = "Slow_Compute",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal,
+};
+/* Definitions for UART_Debug */
+osThreadId_t UART_DebugHandle;
+const osThreadAttr_t UART_Debug_attributes = {
+  .name = "UART_Debug",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityBelowNormal,
+};
+/* Definitions for High_Compute */
+osThreadId_t High_ComputeHandle;
+const osThreadAttr_t High_Compute_attributes = {
+  .name = "High_Compute",
+  .stack_size = 512 * 4,
+  .priority = (osPriority_t) osPriorityAboveNormal,
+};
+
+/* Private function prototypes -----------------------------------------------*/
+/* USER CODE BEGIN FunctionPrototypes */
+
+
+/* USER CODE END FunctionPrototypes */
+
+void StartDefaultTask(void *argument);
+void RUN_LED_Flash_Task(void *argument);
+void State_LED_Flash_Task(void *argument);
+void KEY_Scan_Task(void *argument);
+void Set_And_Show_Task(void *argument);
+void Slow_Compute_Task(void *argument);
+void UART_Debug_Task(void *argument);
+void High_Compute_Task(void *argument);
+
+void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
+
+/**
+  * @brief  FreeRTOS initialization
+  * @param  None
+  * @retval None
+  */
+void MX_FREERTOS_Init(void) {
+  /* USER CODE BEGIN Init */
+
+  /* USER CODE END Init */
+
+  /* USER CODE BEGIN RTOS_MUTEX */
+  /* add mutexes, ... */
+  /* USER CODE END RTOS_MUTEX */
+
+  /* USER CODE BEGIN RTOS_SEMAPHORES */
+  /* add semaphores, ... */
+  /* USER CODE END RTOS_SEMAPHORES */
+
+  /* USER CODE BEGIN RTOS_TIMERS */
+  /* start timers, add new ones, ... */
+  /* USER CODE END RTOS_TIMERS */
+
+  /* USER CODE BEGIN RTOS_QUEUES */
+  /* add queues, ... */
+  /* USER CODE END RTOS_QUEUES */
+
+  /* Create the thread(s) */
+  /* creation of defaultTask */
+  defaultTaskHandle = osThreadNew(StartDefaultTask, NULL, &defaultTask_attributes);
+
+  /* creation of RUN_LED_Flash */
+  RUN_LED_FlashHandle = osThreadNew(RUN_LED_Flash_Task, NULL, &RUN_LED_Flash_attributes);
+
+  /* creation of State_LED_Flash */
+  State_LED_FlashHandle = osThreadNew(State_LED_Flash_Task, NULL, &State_LED_Flash_attributes);
+
+  /* creation of KEY_Scan */
+  KEY_ScanHandle = osThreadNew(KEY_Scan_Task, NULL, &KEY_Scan_attributes);
+
+  /* creation of Set_And_Show */
+  Set_And_ShowHandle = osThreadNew(Set_And_Show_Task, NULL, &Set_And_Show_attributes);
+
+  /* creation of Slow_Compute */
+  Slow_ComputeHandle = osThreadNew(Slow_Compute_Task, NULL, &Slow_Compute_attributes);
+
+  /* creation of UART_Debug */
+  UART_DebugHandle = osThreadNew(UART_Debug_Task, NULL, &UART_Debug_attributes);
+
+  /* creation of High_Compute */
+  High_ComputeHandle = osThreadNew(High_Compute_Task, NULL, &High_Compute_attributes);
+
+  /* USER CODE BEGIN RTOS_THREADS */
+  /* add threads, ... */
+  /* USER CODE END RTOS_THREADS */
+
+  /* USER CODE BEGIN RTOS_EVENTS */
+  /* add events, ... */
+  /* USER CODE END RTOS_EVENTS */
+
+}
+
+/* USER CODE BEGIN Header_StartDefaultTask */
+/**
+  * @brief  Function implementing the defaultTask thread.
+  * @param  argument: Not used
+  * @retval None
+  */
+/* USER CODE END Header_StartDefaultTask */
+void StartDefaultTask(void *argument)
+{
+  /* USER CODE BEGIN StartDefaultTask */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END StartDefaultTask */
+}
+
+/* USER CODE BEGIN Header_RUN_LED_Flash_Task */
+/**
+* @brief Function implementing the RUN_LED_Flash thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_RUN_LED_Flash_Task */
+__weak void RUN_LED_Flash_Task(void *argument)
+{
+  /* USER CODE BEGIN RUN_LED_Flash_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END RUN_LED_Flash_Task */
+}
+
+/* USER CODE BEGIN Header_State_LED_Flash_Task */
+/**
+* @brief Function implementing the State_LED_Flash thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_State_LED_Flash_Task */
+__weak void State_LED_Flash_Task(void *argument)
+{
+  /* USER CODE BEGIN State_LED_Flash_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END State_LED_Flash_Task */
+}
+
+/* USER CODE BEGIN Header_KEY_Scan_Task */
+/**
+* @brief Function implementing the KEY_Scan thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_KEY_Scan_Task */
+__weak void KEY_Scan_Task(void *argument)
+{
+  /* USER CODE BEGIN KEY_Scan_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END KEY_Scan_Task */
+}
+
+/* USER CODE BEGIN Header_Set_And_Show_Task */
+/**
+* @brief Function implementing the Set_And_Show thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Set_And_Show_Task */
+__weak void Set_And_Show_Task(void *argument)
+{
+  /* USER CODE BEGIN Set_And_Show_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Set_And_Show_Task */
+}
+
+/* USER CODE BEGIN Header_Slow_Compute_Task */
+/**
+* @brief Function implementing the Slow_Compute thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_Slow_Compute_Task */
+__weak void Slow_Compute_Task(void *argument)
+{
+  /* USER CODE BEGIN Slow_Compute_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END Slow_Compute_Task */
+}
+
+/* USER CODE BEGIN Header_UART_Debug_Task */
+/**
+* @brief Function implementing the UART_Debug thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_UART_Debug_Task */
+__weak void UART_Debug_Task(void *argument)
+{
+  /* USER CODE BEGIN UART_Debug_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END UART_Debug_Task */
+}
+
+/* USER CODE BEGIN Header_High_Compute_Task */
+/**
+* @brief Function implementing the High_Compute thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_High_Compute_Task */
+__weak void High_Compute_Task(void *argument)
+{
+  /* USER CODE BEGIN High_Compute_Task */
+  /* Infinite loop */
+  for(;;)
+  {
+    osDelay(1);
+  }
+  /* USER CODE END High_Compute_Task */
+}
+
+/* Private application code --------------------------------------------------*/
+/* USER CODE BEGIN Application */
+
+/* USER CODE END Application */
+
