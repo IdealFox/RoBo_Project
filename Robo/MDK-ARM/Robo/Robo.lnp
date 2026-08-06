@@ -1,4 +1,4 @@
---cpu=Cortex-M4.fp
+--cpu=Cortex-M4.fp.sp
 "robo\startup_stm32f407xx.o"
 "robo\main.o"
 "robo\gpio.o"
