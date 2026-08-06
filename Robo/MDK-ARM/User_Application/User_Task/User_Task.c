@@ -55,30 +55,6 @@ TaskStatus_t xTaskDetails_Slow_Compute;
 TaskStatus_t xTaskDetails_High_Compute;
 TaskStatus_t xTaskDetails_UART_Debug;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /** @brief	总初始化函数
   * @note	该函数为在任务调度器启动前的所有硬件与软件初始化函数
   **/
