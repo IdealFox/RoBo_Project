@@ -15,7 +15,7 @@
 //按键长按触发时长判断
 #define KEY_Long_Time_Tigger_Set	50		//长按判定时长为1000ms
 
-char KEY_Num[9];	//按键键码缓存区
+KEY_Tigger_State KEY_Num[9];	//按键键码缓存区
 
 /** @brief	按键轮询函数，轮询间隔为20ms
   **/
@@ -196,6 +196,14 @@ KEY_Tigger_State Get_Key_State(KEY_Encode KEY_X)
 	KEY_Num_Buffer = KEY_Num[KEY_X];
 	KEY_Num[KEY_X] = 0;
 	return (KEY_Tigger_State)KEY_Num_Buffer;
+}
+
+/** @brief	复位所有键码状态
+  **/
+void Key_State_Clear(void)
+{
+	for(char i=0;i<9;i++)
+		KEY_Num[i] = NO_Tigger;
 }
 
 

@@ -36,6 +36,7 @@ typedef enum
 
 void KEY_Polling_Function(void);					//按键轮询函数，轮询间隔为20ms
 KEY_Tigger_State Get_Key_State(KEY_Encode KEY_X);	//获取按键状态
+void Key_State_Clear(void);							//复位所有键码状态
 
 
 #endif

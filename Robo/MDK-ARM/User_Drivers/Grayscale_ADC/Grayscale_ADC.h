@@ -16,7 +16,7 @@
 
 #define Calibrate_Sampling_Num	100			//校准时采样次数，采样一次为1ms
 #define Grayscale_Num			14			//灰度传感器数量设定
-#define Grayscale_Weight_Bias	2			//从中心点开始，每个传感器的偏移权重
+#define Grayscale_Weight_Bias	1			//从中心点开始，每个传感器的偏移权重
 
 //灰度传感器ADC数据缓存区
 extern short Grayscale_ADC_Buffer[16];
@@ -29,8 +29,9 @@ struct Grayscale_ADC{
 	short Grayscale_ADC_Compute[16];//灰度传感器数据校准值
 	float Grayscale_ADC_Compute_Percent[16];	//灰度传感器数据校准后百分比
 	float Grayscale_ADC_Trigger_Threshold;		//灰度传感器触发阈值
-	char Compute_Map_Mode;			//映射计算模式，0：正向计算(线位置传感器值为高)，1：反向计算(线位置传感器值为低)
-	float Grayscale_Map;			//灰度传感器ADC映射一维坐标
+	char Compute_Map_Mode;						//映射计算模式，0：正向计算(线位置传感器值为高)，1：反向计算(线位置传感器值为低)
+	float Grayscale_Map;						//灰度传感器ADC映射一维坐标值
+	char Grayscale_Trigger_State[16];			//灰度传感器触发状态
 };
 extern struct Grayscale_ADC Grayscale;
 
