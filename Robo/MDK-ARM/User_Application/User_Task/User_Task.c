@@ -60,7 +60,9 @@ TaskStatus_t xTaskDetails_UART_Debug;
   **/
 void User_Init(void)
 {
-	Flash_Read();			//从Flash中读取数据，单片机首次下载程序时不要运行该函数，否则会产生数据错误
+	//单片机首次下载程序时不要运行该函数，否则会产生数据错误
+	//再执行一遍flash写入操作后方可运行该函数
+	Flash_Read();			//从Flash中读取数据
 	
 	Motor_Init();			//电机初始化
 	Servo_Init();			//舵机初始化

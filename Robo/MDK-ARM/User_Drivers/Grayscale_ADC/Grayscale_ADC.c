@@ -109,6 +109,7 @@ void Grayscale_ADC_Compute(void)
 	for(char i=0;i<Grayscale_Num;i++)
 		Grayscale.Grayscale_ADC_Actual[i] = Grayscale_ADC_Buffer[i];
 	
+	//计算灰度百分比
 	//正向计算模式
 	if(Grayscale.Compute_Map_Mode == 0)
 	{	//计算校准值
@@ -147,6 +148,27 @@ void Grayscale_ADC_Compute(void)
 														* 100.0f;
 		}
 	}
+
+	//计算映射一维坐标值
+	float Grayscale_Weight=0;	//灰度权重值
+	float Grayscale_Int=0;		//灰度总值
+
+	//根据Grayscale_Num自适应计算各传感器偏移权重并累计
+	//传感器权重 = (传感器索引 - 中心位置) * Grayscale_Weight_Bias，中心位置 = (Grayscale_Num-1)/2
+	//仅需修改Grayscale_Num或Grayscale_Weight_Bias宏即可适配不同数量的灰度传感器，无需改动本函数
+	for(char i=0;i<Grayscale_Num;i++)
+	{
+		Grayscale_Weight += Grayscale.Grayscale_ADC_Compute_Percent[i]
+							* ((float)i - (Grayscale_Num - 1) / 2.0f)
+							* Grayscale_Weight_Bias;
+		//累计总值
+		Grayscale_Int  += Grayscale.Grayscale_ADC_Compute_Percent[i];
+	}
+
+	//计算映射值（防止除零）
+	if(Grayscale_Int != 0)
+		Grayscale.Grayscale_Map = Grayscale_Weight / Grayscale_Int;
+
 }
 
 

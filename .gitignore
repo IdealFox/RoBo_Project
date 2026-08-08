@@ -50,3 +50,10 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# Keil MDK build output
+*.crf
+*.lnp
+*.iex
+*.lst
+Robo/MDK-ARM/Robo/
